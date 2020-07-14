@@ -1,0 +1,23 @@
+# commands docker/k8s
+docker build -t esilean/[imagename] .
+docker push esilean/[imagename]
+docker rollout restart deployment [depl-name]
+
+kubectl get pods
+kubectl get services
+kubectl get deployments
+
+kubectl get secrets
+
+# command to start the dev server using skaffold
+skaffold dev
+
+# ingress
+config to map 'load balancer'
+url outside => url service configured in *-depl.yaml
+
+# create secrets in k8s
+kubectl create secret generic jwt-secret --from-literal=JWT_KEY=asdf
+
+# GC
+gcloud auth application-default login
