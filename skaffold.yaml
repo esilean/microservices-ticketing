@@ -16,7 +16,7 @@ build:
         dockerfile: Dockerfile
       sync:
         manual:
-          - src: "src/**/*/ts"
+          - src: "src/**/*.ts"
             dest: .
     - image: gcr.io/ticketing-dev-283320/web-client
       context: web
@@ -24,5 +24,5 @@ build:
         dockerfile: Dockerfile
       sync:
         manual:
-          - src: "**/*/js"
+          - src: "**/*.js"
             dest: .

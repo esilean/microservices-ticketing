@@ -7,9 +7,19 @@ kubectl get pods
 kubectl get services
 kubectl get deployments
 
-kubectl get secrets
+# Enter in POD
+kubectl exec -it [POD] sh
 
-# command to start the dev server using skaffold
+# Comunication between namespaces
+kubectl get services - n [name of namespace]
+url: http://[SERVICENAME].[NAMESPACE].svc.cluster.local
+
+# Secrets
+kubectl get secrets
+kubectl edit secrets key
+kubectl delete secrets key
+
+# Command to start the dev server using skaffold
 skaffold dev
 
 # ingress
@@ -20,4 +30,6 @@ url outside => url service configured in *-depl.yaml
 kubectl create secret generic jwt-secret --from-literal=JWT_KEY=asdf
 
 # GC
+> must install gcloud sdk
+gcloud container clusters get-credentials ticketing-dev
 gcloud auth application-default login
