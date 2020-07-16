@@ -37,3 +37,6 @@ gcloud auth application-default login
 # git
 # force pull for submodules (common)
 git submodule update --init --recursive
+
+# open port for access pods
+kubectl port-forward [POD] 4222:4222
