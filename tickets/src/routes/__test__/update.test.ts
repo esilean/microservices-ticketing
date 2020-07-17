@@ -1,7 +1,9 @@
 import request from 'supertest'
 import { app } from '../../app'
-import { Ticket } from '../../model/tickets'
+import { Ticket } from '../../models/tickets'
 import generateMongoId from '../../test/generate-mongo-id'
+
+import { natsWrapper } from '../../nats-wrapper'
 
 it('returns a 404 if the supplied id does not exist', async () => {
   await request(app)
@@ -103,4 +105,29 @@ it('updates the ticket provided with valid inputs', async () => {
 
   expect(ticket!.title).toEqual('newtitle')
   expect(ticket!.price).toEqual(200)
+})
+
+it('pubishes an event', async () => {
+  const cookie = global.signin()
+
+  //create a ticket
+  const response = await request(app)
+    .post('/api/tickets')
+    .set('Cookie', cookie)
+    .send({
+      title: 'title',
+      price: 10,
+    })
+    .expect(201)
+
+  await request(app)
+    .put(`/api/tickets/${response.body.id}`)
+    .set('Cookie', cookie)
+    .send({
+      title: 'newtitle',
+      price: 200,
+    })
+    .expect(200)
+
+  expect(natsWrapper.stan.publish).toHaveBeenCalled()
 })

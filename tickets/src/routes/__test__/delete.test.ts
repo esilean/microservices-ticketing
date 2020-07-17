@@ -1,7 +1,9 @@
 import request from 'supertest'
 import { app } from '../../app'
-import { Ticket } from '../../model/tickets'
+import { Ticket } from '../../models/tickets'
 import generateMongoId from '../../test/generate-mongo-id'
+
+import { natsWrapper } from '../../nats-wrapper'
 
 it('return a 404 if the provided id does not exist', async () => {
   await request(app)
@@ -55,4 +57,26 @@ it('deletes the ticket provided', async () => {
   const ticket = await Ticket.findById(response.body.id)
 
   expect(ticket).toBeNull()
+})
+
+it('pubishes an event', async () => {
+  const cookie = global.signin()
+
+  //create a ticket
+  const response = await request(app)
+    .post('/api/tickets')
+    .set('Cookie', cookie)
+    .send({
+      title: 'title',
+      price: 10,
+    })
+    .expect(201)
+
+  await request(app)
+    .delete(`/api/tickets/${response.body.id}`)
+    .set('Cookie', cookie)
+    .send()
+    .expect(204)
+
+  expect(natsWrapper.stan.publish).toHaveBeenCalled()
 })

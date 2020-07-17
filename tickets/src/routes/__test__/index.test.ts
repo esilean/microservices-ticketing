@@ -2,7 +2,10 @@ import request from 'supertest'
 import { app } from '../../app'
 
 const createTicket = async () => {
-  return request(app).post('/api/tickets').set('Cookie', global.signin()).send({ title: 'title', price: 20 })
+  return request(app)
+    .post('/api/tickets')
+    .set('Cookie', global.signin())
+    .send({ title: 'title', price: 20 })
 }
 
 it('can fetch a list of tickets', async () => {

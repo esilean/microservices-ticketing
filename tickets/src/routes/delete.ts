@@ -1,6 +1,8 @@
 import express, { Request, Response } from 'express'
-import { Ticket } from '../model/tickets'
+import { Ticket } from '../models/tickets'
 import { requireAuth, NotFoundError, NotAuthorizedError } from '@bevticketing/common'
+import { TicketDeletedPublisher } from '../events/publishers/ticket-deleted-publisher'
+import { natsWrapper } from '../nats-wrapper'
 
 const router = express.Router()
 
@@ -16,6 +18,11 @@ router.delete('/api/tickets/:id', requireAuth, async (req: Request, res: Respons
   }
 
   ticket.remove()
+
+  await new TicketDeletedPublisher(natsWrapper.stan).publish({
+    id: ticket.id,
+    userId: ticket.userId,
+  })
 
   res.status(204).send({})
 })

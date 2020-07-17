@@ -1,7 +1,6 @@
 import request from 'supertest'
-import mongoose from 'mongoose'
 import { app } from '../../app'
-import { Ticket } from '../../model/tickets'
+import { Ticket } from '../../models/tickets'
 
 import generateMongoId from '../../test/generate-mongo-id'
 
