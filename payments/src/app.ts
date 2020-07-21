@@ -3,6 +3,8 @@ import 'express-async-errors'
 import { json } from 'body-parser'
 import cookieSession from 'cookie-session'
 
+import { createPaymentRouter } from './routes/new'
+
 import { currentUser, errorHandler, NotFoundError } from '@bevticketing/common'
 
 const app = express()
@@ -15,6 +17,8 @@ app.use(
   })
 )
 app.use(currentUser)
+
+app.use(createPaymentRouter)
 
 app.all('*', async () => {
   throw new NotFoundError()

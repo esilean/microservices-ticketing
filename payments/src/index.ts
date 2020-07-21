@@ -1,6 +1,8 @@
 import mongoose from 'mongoose'
 import { natsWrapper } from './nats-wrapper'
 import { app } from './app'
+import { OrderCreatedListener } from './events/listeners/order-created-listener'
+import { OrderCancelledListener } from './events/listeners/order-cancelled-listener'
 
 const start = async () => {
   if (!process.env.JWT_KEY) {
@@ -19,6 +21,10 @@ const start = async () => {
     throw new Error('NATS_CLIENT_ID must be defined')
   }
 
+  if (!process.env.STRIPE_KEY) {
+    throw new Error('STRIPE_KEY must be defined')
+  }
+
   try {
     await natsWrapper.connect(
       process.env.NATS_CLUSTER_ID,
@@ -32,6 +38,9 @@ const start = async () => {
 
     process.on('SIGINT', () => natsWrapper.stan.close())
     process.on('SIGTERM', () => natsWrapper.stan.close())
+
+    new OrderCreatedListener(natsWrapper.stan).listen()
+    new OrderCancelledListener(natsWrapper.stan).listen()
 
     await mongoose.connect(process.env.MONGO_URI!, {
       useNewUrlParser: true,

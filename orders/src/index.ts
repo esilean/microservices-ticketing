@@ -8,6 +8,8 @@ import { TicketDeletedListener } from './events/listeners/ticket-deleted-listene
 
 import { ExpirationCompleteListener } from './events/listeners/expiration-complete-listener'
 
+import { PaymentCreatedListener } from './events/listeners/payment-created-listener'
+
 const start = async () => {
   if (!process.env.JWT_KEY) {
     throw new Error('JWT_KEY must be defined')
@@ -44,6 +46,8 @@ const start = async () => {
     new TicketDeletedListener(natsWrapper.stan).listen()
 
     new ExpirationCompleteListener(natsWrapper.stan).listen()
+
+    new PaymentCreatedListener(natsWrapper.stan).listen()
 
     await mongoose.connect(process.env.MONGO_URI!, {
       useNewUrlParser: true,

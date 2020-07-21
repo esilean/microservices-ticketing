@@ -7,12 +7,15 @@ import { app } from '../app'
 declare global {
   namespace NodeJS {
     interface Global {
-      signin(): string[]
+      signin(id?: string): string[]
     }
   }
 }
 
 jest.mock('../nats-wrapper')
+
+process.env.STRIPE_KEY =
+  'sk_test_51H7OS2KuY6GjxtniiTNdak9EJSnjZB1wdcAeptI3hbaljCygXvhM1P47NIJrlhR5UQeA8zvpWSoFjsoMoAQkIDrJ00uvkQFNYI'
 
 let mongo: any
 beforeAll(async () => {
@@ -41,10 +44,10 @@ afterAll(async () => {
   await mongoose.connection.close()
 })
 
-global.signin = () => {
+global.signin = (id?: string) => {
   // build a JWT payload. {id, email}
   const payload = {
-    id: generateMongoId(),
+    id: id || generateMongoId(),
     email: 'test@test.com',
   }
 
