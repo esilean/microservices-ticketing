@@ -80,3 +80,27 @@ it('pubishes an event', async () => {
 
   expect(natsWrapper.stan.publish).toHaveBeenCalled()
 })
+
+it('rejects delete a ticket if the ticket is reserved', async () => {
+  const cookie = global.signin()
+
+  //create a ticket
+  const response = await request(app)
+    .post('/api/tickets')
+    .set('Cookie', cookie)
+    .send({
+      title: 'title',
+      price: 10,
+    })
+    .expect(201)
+
+  const ticket = await Ticket.findById(response.body.id)
+  ticket!.set({ orderId: generateMongoId() })
+  await ticket!.save()
+
+  await request(app)
+    .delete(`/api/tickets/${response.body.id}`)
+    .set('Cookie', cookie)
+    .send()
+    .expect(400)
+})

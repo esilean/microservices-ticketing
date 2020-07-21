@@ -4,6 +4,7 @@ import { Order } from '../../models/order'
 import { Ticket } from '../../models/ticket'
 import generateMongoId from '../../test/generate-mongo-id'
 import { OrderStatus } from '@bevticketing/common'
+import { natsWrapper } from '../../nats-wrapper'
 
 it('returns an error 404 if the ticket does not exist', async () => {
   const ticketId = generateMongoId()
@@ -17,6 +18,7 @@ it('returns an error 404 if the ticket does not exist', async () => {
 
 it('returns an error 400 if the ticket is already reserved', async () => {
   const ticket = Ticket.build({
+    id: generateMongoId(),
     title: 'title',
     price: 10,
   })
@@ -41,6 +43,7 @@ it('returns an error 400 if the ticket is already reserved', async () => {
 
 it('reserves a ticket', async () => {
   const ticket = Ticket.build({
+    id: generateMongoId(),
     title: 'title',
     price: 10,
   })
@@ -57,4 +60,21 @@ it('reserves a ticket', async () => {
   expect(response.body.ticket.id).toEqual(ticket.id)
 })
 
-it.todo('emits an order created event')
+it('emits an order created event', async () => {
+  const ticket = Ticket.build({
+    id: generateMongoId(),
+    title: 'title',
+    price: 10,
+  })
+  await ticket.save()
+
+  await request(app)
+    .post('/api/orders')
+    .set('Cookie', global.signin())
+    .send({
+      ticketId: ticket.id,
+    })
+    .expect(201)
+
+  expect(natsWrapper.stan.publish).toHaveBeenCalled()
+})

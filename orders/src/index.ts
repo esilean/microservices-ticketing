@@ -2,6 +2,10 @@ import mongoose from 'mongoose'
 import { natsWrapper } from './nats-wrapper'
 import { app } from './app'
 
+import { TicketCreatedListener } from './events/listeners/ticket-created-listener'
+import { TicketUpdatedListener } from './events/listeners/ticket-updated-listener'
+import { TicketDeletedListener } from './events/listeners/ticket-deleted-listener'
+
 const start = async () => {
   if (!process.env.JWT_KEY) {
     throw new Error('JWT_KEY must be defined')
@@ -32,6 +36,10 @@ const start = async () => {
 
     process.on('SIGINT', () => natsWrapper.stan.close())
     process.on('SIGTERM', () => natsWrapper.stan.close())
+
+    new TicketCreatedListener(natsWrapper.stan).listen()
+    new TicketUpdatedListener(natsWrapper.stan).listen()
+    new TicketDeletedListener(natsWrapper.stan).listen()
 
     await mongoose.connect(process.env.MONGO_URI!, {
       useNewUrlParser: true,

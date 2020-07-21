@@ -6,6 +6,7 @@ import {
   NotFoundError,
   NotAuthorizedError,
   validateRequest,
+  BadRequestError,
 } from '@bevticketing/common'
 import { TicketUpdatedPublisher } from '../events/publishers/ticket-updated-publisher'
 import { natsWrapper } from '../nats-wrapper'
@@ -31,6 +32,10 @@ router.put(
       throw new NotAuthorizedError()
     }
 
+    if (ticket.orderId) {
+      throw new BadRequestError('cannot edit a ticket that is reserved')
+    }
+
     ticket.set({
       title: req.body.title,
       price: req.body.price,
@@ -43,6 +48,7 @@ router.put(
       title: ticket.title,
       price: ticket.price,
       userId: ticket.userId,
+      version: ticket.version,
     })
 
     res.send(ticket)

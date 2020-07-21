@@ -1,9 +1,11 @@
 import request from 'supertest'
 import { app } from '../../app'
 import { Ticket } from '../../models/ticket'
+import generateMongoId from '../../test/generate-mongo-id'
 
 const createTicket = async () => {
   const ticket = Ticket.build({
+    id: generateMongoId(),
     title: 'title',
     price: 10,
   })

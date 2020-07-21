@@ -107,7 +107,7 @@ it('updates the ticket provided with valid inputs', async () => {
   expect(ticket!.price).toEqual(200)
 })
 
-it('pubishes an event', async () => {
+it('publishes an event', async () => {
   const cookie = global.signin()
 
   //create a ticket
@@ -130,4 +130,31 @@ it('pubishes an event', async () => {
     .expect(200)
 
   expect(natsWrapper.stan.publish).toHaveBeenCalled()
+})
+
+it('rejects update a ticket if the ticket is reserved', async () => {
+  const cookie = global.signin()
+
+  //create a ticket
+  const response = await request(app)
+    .post('/api/tickets')
+    .set('Cookie', cookie)
+    .send({
+      title: 'title',
+      price: 10,
+    })
+    .expect(201)
+
+  const ticket = await Ticket.findById(response.body.id)
+  ticket!.set({ orderId: generateMongoId() })
+  await ticket!.save()
+
+  await request(app)
+    .put(`/api/tickets/${response.body.id}`)
+    .set('Cookie', cookie)
+    .send({
+      title: 'newtitle',
+      price: 200,
+    })
+    .expect(400)
 })
