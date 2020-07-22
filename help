@@ -41,3 +41,9 @@ git submodule update --init --recursive
 
 # open port for access pods
 kubectl port-forward [POD] 4222:4222
+
+# list all context
+kubectl config view
+
+# use a different cluster
+kubectl config use-context [context-name]

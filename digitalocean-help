@@ -1,0 +1,8 @@
+# auth in digital ocean project
+doctl auth init [API]
+
+# get connection info for the new cluster
+doctl kubernetes cluster kubeconfig save [cluster_name]
+
+# list all context
+kubectl config view
