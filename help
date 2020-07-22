@@ -30,6 +30,9 @@ url outside => url service configured in *-depl.yaml
 kubectl create secret generic jwt-secret --from-literal=JWT_KEY=asdf
 kubectl create secret generic stripe-secret --from-literal=STRIPE_KEY=sk_test_51H7OS2KuY6GjxtniiTNdak9EJSnjZB1wdcAeptI3hbaljCygXvhM1P47NIJrlhR5UQeA8zvpWSoFjsoMoAQkIDrJ00uvkQFNYI
 
+# install ingress-nginx ( ************************ IMPORTANT ************************** )
+https://kubernetes.github.io/ingress-nginx/deploy/
+
 # GC
 > must install gcloud sdk
 gcloud container clusters get-credentials ticketing-dev
