@@ -9,27 +9,28 @@ The goal of this project is to study microservices and how it communicates betwe
 
 - Clone the repository
 - Install all dependencies
-- Configure docker images
+- Configure manifest files (docker images if need)
 - Create secrets
 - Configure hosts file 'ticketing.dev':'127.0.0.1'
+- Install ingress-nginx: https://kubernetes.github.io/ingress-nginx/deploy/
 - Install skaffold and run skaffold dev
-- Browse https://ticketing.dev
+- Open http://ticketing.dev to view it in the browser
 
 ## Technologies implemented:
 
-- React
-- Next
+- Docker and Kubernetes
+- Express
+- React/Next
 - NATS Streaming Server
 - Nodejs
 - Redis
 - MongoDB
 - Jest
 - Stripe
-- Docker and K8s
-- Express
 - Typescript and Javascript
 
 ## Architecture:
 
-- Full architecture with responsibility separation concerns, SOLID and Clean Code
+- SOLID and Clean Code
 - Event Sourcing
+- Microservices
